@@ -66,8 +66,10 @@ public:
     /* Iterators */
     iterator begin();
     const_iterator begin() const;
+    const_iterator cbegin();
     iterator end();
     const_iterator end() const;
+    const_iterator cend();
 
     /* Allocator */
     allocator_type get_allocator() const;

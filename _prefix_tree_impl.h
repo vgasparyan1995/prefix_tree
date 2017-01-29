@@ -1,7 +1,6 @@
 #pragma once
 
-    std::array<node<StringT, MappedT>*, CHILDREN> m_children;
-
+#include "node.h"
 
 template <typename StringT,
           typename MappedT,
@@ -23,5 +22,5 @@ struct prefix_tree_impl : public AllocatorT
         }
     }
     
-    node<StringT, MappedT>* m_root;
+    node<MappedT, CHILDREN>* m_root;
 };
