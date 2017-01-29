@@ -4,6 +4,18 @@
 
 namespace local {
 
+template <typename CharT>
+struct max_value
+{
+    static const int value = std::numeric_limits<CharT>::max();
+};
+
+template <typename StringT,
+          typename MappedT,
+          typename AllocatorT,
+          int CHILDREN>
+struct prefix_tree_impl;
+
 template <typename StringT,
           typename MappedT,
           typename AllocatorT = std::allocator<MappedT> >
@@ -31,8 +43,8 @@ public:
     template <typename FwdIterT>
     prefix_tree(FwdIterT first, FwdIterT last, const allocator_type& a = allocator_type());
 
-    prefix_tree& (const prefix_tree&);
-    prefix_tree& (prefix_tree&&);
+    prefix_tree& operator= (const prefix_tree&);
+    prefix_tree& operator= (prefix_tree&&);
 
     ~prefix_tree();
 
@@ -61,7 +73,7 @@ public:
     allocator_type get_allocator() const;
 
 private:
-    /* private members go here */
+    prefix_tree_impl<key_type, mapped_type, allocator_type, max_value<char_type>::value + 1>* m_impl;
 };
 
 #include "_prefix_tree_impl.h"
