@@ -31,8 +31,8 @@ public:
     template <typename FwdIterT>
     prefix_tree(FwdIterT first, FwdIterT last, const allocator_type& a = allocator_type());
 
-    prefix_tree& (const prefix_tree&);
-    prefix_tree& (prefix_tree&&);
+    prefix_tree& operator=(const prefix_tree&);
+    prefix_tree& operator=(prefix_tree&&);
 
     ~prefix_tree();
 
@@ -54,8 +54,10 @@ public:
     /* Iterators */
     iterator begin();
     const_iterator begin() const;
+    const_iterator cbegin();
     iterator end();
     const_iterator end() const;
+    const_iterator cend();
 
     /* Allocator */
     allocator_type get_allocator() const;
