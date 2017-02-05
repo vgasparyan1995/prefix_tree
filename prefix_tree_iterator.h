@@ -9,31 +9,32 @@ template <typename StringT,
           typename AllocatorT = std::allocator<MappedT> >
 class prefix_tree;
 
-template <typename I>
+template <typename CharT, typename MappedT>
 class prefix_tree_const_iterator;
 
-template <typenamt T>
+template <typename CharT, typename MappedT>
 class node;
 
-template <typename T>
+template <typename CharT, typename MappedT>
 class prefix_tree_iterator
 {
 public:
     using iterator_category = std::forward_iterator_tag;
-    using value_type = T;
+    using value_type = MappedT;
     using difference_type = std::ptrdiff_t;
-    using self = prefix_tree_iterator<T>;
-    using pointer = T*;
-    using reference = T&;
+    using self = prefix_tree_iterator<CharT, MappedT>;
+    using pointer = value_type*;
+    using reference = value_type&;
 
 public:
     prefix_tree_iterator()
-        : m_node()
+        : m_node(nullptr)
     {
     }
 
-    prefix_tree_iterator(node<T>* n)
-        m_node{n}
+    template <typename CharT, typename MappedT>
+    explicit prefix_tree_iterator(node<CharT, MappedT>* n)
+        : m_node{n}
     {
     }
 
@@ -49,10 +50,15 @@ public:
 
     self& operator++()
     {
+        // TODO!
+        return *this;
     }
 
     self operator++(int)
     {
+        auto tmp = *this;
+        ++(*this);
+        return tmp;
     }
 
     bool operator==(const self& other)
@@ -69,32 +75,33 @@ private:
     template <typename I>
     friend class prefix_tree_const_iterator;
 
-    node<T>* m_node;
+    node<CharT, MappedT>* m_node;
 };
 
-template <typename T>
+template <typename CharT, typename MappedT>
 class prefix_tree_const_iterator
 {
 public:
     using iterator_category = std::forward_iterator_tag;
-    using value_type = T;
+    using value_type = MappedT;
     using difference_type = std::ptrdiff_t;
-    using self = prefix_tree_const_iterator<T>;
-    using pointer = const T*;
-    using reference = const T&;
+    using self = prefix_tree_const_iterator<CharT, MappedT>;
+    using pointer = const value_type*;
+    using reference = const value_type&;
 
 public:
     prefix_tree_const_iterator()
-        : m_node()
+        : m_node(nullptr)
     {
     }
 
-    prefix_tree_const_iterator(node<T>* n)
+    template <typename CharT, typename MappedT>
+    explicit prefix_tree_iterator(const node<CharT, MappedT>* n)
         m_node{n}
     {
     }
 
-    prefix_tree_const_iterator(const prefix_tree_iterator<T> iter)
+    explicit prefix_tree_const_iterator(const prefix_tree_iterator<CharT, MappedT> iter)
         : m_node{iter.m_node}
     {
     }
@@ -111,12 +118,15 @@ public:
 
     self& operator++()
     {
+        // TODO!
+        return *this;
     }
 
     self operator++(int)
     {
-        self temp = *this;
-        m_node
+        auto tmp = *this;
+        ++(*this);
+        return tmp;
     }
 
     bool operator==(const self& other)
@@ -130,7 +140,7 @@ public:
     }
 
 private:
-    node<T>* m_node;
+    const node<CharT, MappedT>* m_node;
 };
 
 

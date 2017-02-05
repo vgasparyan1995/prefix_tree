@@ -2,18 +2,13 @@
 
 #include <memory>
 
-namespace local {
+#include "prefix_tree_iterator.h"
 
-template <typename CharT>
-struct max_value
-{
-    static const int value = std::numeric_limits<CharT>::max();
-};
+namespace local {
 
 template <typename StringT,
           typename MappedT,
-          typename AllocatorT,
-          int CHILDREN>
+          typename AllocatorT>
 struct prefix_tree_impl;
 
 template <typename StringT,
@@ -75,7 +70,7 @@ public:
     allocator_type get_allocator() const;
 
 private:
-    prefix_tree_impl<key_type, mapped_type, allocator_type, max_value<char_type>::value + 1>* m_impl;
+    prefix_tree_impl<key_type, mapped_type, allocator_type>* m_impl;
 };
 
 #include "_prefix_tree_impl.h"
