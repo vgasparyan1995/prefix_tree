@@ -48,6 +48,17 @@ struct node
         alloc.construct(m_value, std::forward<Args>(args)...);
     }
 
+    template <typename AllocatorT, typename ... Args>
+    void set_value(AllocatorT alloc, const key_type& key, Args&& ... args)
+    {
+        if (m_value != nullptr) {
+            remove_value(alloc);
+        }
+        m_value = alloc.allocate(1);
+        alloc.construct(m_value, std::forward<Args>(args)...);
+        m_key = key;
+    }
+
     template <typename AllocatorT>
     void remove_value(AllocatorT alloc)
     {
@@ -60,7 +71,7 @@ struct node
     void clean_recursively(AllocatorT alloc)
     {
         for (auto& child : m_children) {
-            child.second->clean_recursively();
+            child.second->clean_recursively(alloc);
             delete child.second;
             child.second = nullptr;
         }

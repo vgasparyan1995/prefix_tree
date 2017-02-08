@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "prefix_tree_iterator.h"
+#include "_prefix_tree_impl.h"
 
 namespace local {
 
@@ -27,35 +28,36 @@ public:
     using const_reference   = const mapped_type&;
     using pointer           = typename std::allocator_traits<allocator_type>::pointer;
     using const_pointer     = typename std::allocator_traits<allocator_type>::const_pointer;
+    using iterator          = prefix_tree_iterator<char_type, mapped_type>;
+    using const_iterator    = prefix_tree_const_iterator<char_type, mapped_type>;
 
 public:
     /* Constructors, assignment and destructor */
     explicit prefix_tree(const allocator_type& a = allocator_type());
-    prefix_tree(const prefix_tree&);
-    prefix_tree(prefix_tree&&);
+    prefix_tree(const prefix_tree&) = default;
+    prefix_tree(prefix_tree&&) = default;
     prefix_tree(std::initializer_list<value_type>& il, const allocator_type& a = allocator_type());
 
     template <typename FwdIterT>
     prefix_tree(FwdIterT first, FwdIterT last, const allocator_type& a = allocator_type());
 
-    prefix_tree& operator= (const prefix_tree&);
-    prefix_tree& operator= (prefix_tree&&);
+    prefix_tree& operator= (const prefix_tree&) = default;
+    prefix_tree& operator= (prefix_tree&&) = default;
 
-    ~prefix_tree();
+    ~prefix_tree() = default;
 
     /* Selectors */
     const_iterator find(const key_type& key) const;
-    const_reference& operator[] (const key_type& key) const;
     size_type size() const;
     bool empty() const;
 
     /* Mutators */
     iterator find(const key_type& key);
-    iterator insert(const key_type& key, const mapped_type& value);
-    iterator insert(const value_type& value);
+    std::pair<iterator, bool> insert(const key_type& key, const mapped_type& value);
+    std::pair<iterator, bool> insert(const value_type& value);
     reference& operator[] (const key_type& key);
     void erase(const key_type& key);
-    iterator erase(const iterator pos);
+    iterator erase(iterator pos);
     void clear();
 
     /* Iterators */
@@ -70,9 +72,12 @@ public:
     allocator_type get_allocator() const;
 
 private:
-    prefix_tree_impl<key_type, mapped_type, allocator_type>* m_impl;
+    using impl_type = prefix_tree_impl<key_type, mapped_type, allocator_type>;
+
+private:
+    impl_type m_impl;
 };
 
-#include "_prefix_tree_impl.h"
+#include "prefix_tree.hpp"
 
 } // namespace local

@@ -75,6 +75,11 @@ private:
     template <typename I>
     friend class prefix_tree_const_iterator;
 
+    template <typename StringT,
+              typename MappedT,
+              typename AllocatorT>
+    friend class prefix_tree;
+
     node<CharT, MappedT>* m_node;
 };
 
@@ -140,6 +145,11 @@ public:
     }
 
 private:
+    template <typename StringT,
+              typename MappedT,
+              typename AllocatorT>
+    friend class prefix_tree;
+
     const node<CharT, MappedT>* m_node;
 };
 
