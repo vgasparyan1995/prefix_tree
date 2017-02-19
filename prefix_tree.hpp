@@ -10,8 +10,7 @@ CLASS_DECL::prefix_tree(const allocator_type& a/* = allocator_type()*/)
 }
 
 TEMPLATE_DECL
-CLASS_DECL::prefix_tree(std::initializer_list<value_type>& il,
-                                                       const allocator_type& a/* = allocator_type()*/)
+CLASS_DECL::prefix_tree(std::initializer_list<value_type> il, const allocator_type& a/* = allocator_type()*/)
     : m_impl(a)
 {
     for (const auto& v : il) {
@@ -19,11 +18,9 @@ CLASS_DECL::prefix_tree(std::initializer_list<value_type>& il,
     }
 }
 
-template <typename FwdIterT>
 TEMPLATE_DECL
-CLASS_DECL::prefix_tree(FwdIterT first,
-                                                       FwdIterT last,
-                                                       const allocator_type& a/* = allocator_type()*/)
+template <typename FwdIterT>
+CLASS_DECL::prefix_tree(FwdIterT first, FwdIterT last, const allocator_type& a/* = allocator_type()*/)
     : m_impl(a)
 {
     for (auto it = first; it != last; ++it) {
@@ -77,7 +74,7 @@ auto CLASS_DECL::insert(const value_type& value) -> std::pair<iterator, bool>
 }
 
 TEMPLATE_DECL
-auto CLASS_DECL::operator[] (const key_type& key) const -> reference&
+auto CLASS_DECL::operator[] (const key_type& key) -> reference&
 {
     auto node = m_impl.find(key);
     if (node = nullptr) {
@@ -110,12 +107,54 @@ void CLASS_DECL::clear()
     m_impl.clear();
 }
 
-/* Iterator functions (begin, cbegin, end, cend) */
+TEMPLATE_DECL
+auto CLASS_DECL::begin() -> iterator
+{
+    if (empty()) {
+        return end();
+    } else {
+        return iterator(m_impl.root()->leftmostfirst());
+    }
+}
+
+TEMPLATE_DECL
+auto CLASS_DECL::begin() const -> const_iterator
+{
+    if (empty()) {
+        return end();
+    } else {
+        return const_iterator(m_impl.root()->leftmostfirst());
+    }
+}
+
+TEMPLATE_DECL
+auto CLASS_DECL::cbegin() const -> const_iterator
+{
+    return begin();
+}
+
+TEMPLATE_DECL
+auto CLASS_DECL::end() -> iterator
+{
+    return iterator(m_impl.root());
+}
+
+TEMPLATE_DECL
+auto CLASS_DECL::end() const -> const_iterator
+{
+    return const_iterator(m_impl.root());
+}
+
+TEMPLATE_DECL
+auto CLASS_DECL::cend() const -> const_iterator
+{
+    return end();
+}
 
 TEMPLATE_DECL
 auto CLASS_DECL::get_allocator() const -> allocator_type
 {
-    return m_impl;
+    return static_cast<allocator_type>(m_impl);
 }
 
 #undef CLASS_DECL

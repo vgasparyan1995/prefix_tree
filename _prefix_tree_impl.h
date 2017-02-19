@@ -1,6 +1,8 @@
 #pragma once
 
-#include "node.h"
+#include "_prefix_tree_node.h"
+
+namespace local {
 
 template <typename StringT,
           typename MappedT,
@@ -8,24 +10,24 @@ template <typename StringT,
 class prefix_tree_impl : public AllocatorT
 {
 private:
-    using tree_node = node<StringT::value_type, MappedT>;
+    using tree_node = local::node<typename StringT::value_type, MappedT>;
     using key_type = StringT;
     using mapped_type = MappedT;
 
 public:
     explicit prefix_tree_impl(const AllocatorT& a = AllocatorT())
         : AllocatorT(a)
-        , m_root(nullptr)
+        , m_root(new tree_node())
         , m_size(0)
     {
     }
 
     prefix_tree_impl(const prefix_tree_impl& other)
         : AllocatorT(other)
-        , m_root(nullptr)
+        , m_root(new tree_node())
         , m_size(other.m_size)
     {
-        m_root = other.m_root->clone();
+        m_root = other.m_root->clone(*static_cast<AllocatorT*>(this));
     }
 
     prefix_tree_impl(prefix_tree_impl&& other)
@@ -40,7 +42,7 @@ public:
     {
         if (this != &other) {
             *static_cast<AllocatorT*>(this) = other;
-            m_root = other.m_root->clone();
+            m_root = other.m_root->clone(*static_cast<AllocatorT*>(this));
             m_size = other.m_size;
         }
         return *this;
@@ -60,16 +62,25 @@ public:
     ~prefix_tree_impl()
     {
         clear();
+        delete m_root;
+        m_root = nullptr;
     }
 
+    tree_node* root()
+    {
+        return m_root;
+    }
+    
     tree_node* find(const key_type& key) const
     {
         auto current_node = m_root;
         for (const auto character : key) {
-            if (current_node == nullptr) {
+            auto it = current_node->m_children.find(character);
+            if (it == current_node->m_children.end()) {
+                current_node = nullptr;
                 break;
             }
-            current_node = current_node->m_children[character];
+            current_node = it->second;
         }
         return current_node;
     }
@@ -80,15 +91,15 @@ public:
         auto parent_node = current_node;
         for (const auto character : key) {
             parent_node = current_node;
-            current_node = current_node->m_children[character];
+            current_node = parent_node->m_children[character];
             if (current_node == nullptr) {
-                current_node = new tree_node(parent_node, character);
+                current_node = parent_node->m_children[character] = new tree_node(parent_node, character);
             }
         }
         if (current_node->m_value != nullptr) {
             return std::make_pair(current_node, false);
         }
-        current_node->set_value(*this, key, value);
+        current_node->set_value(*static_cast<AllocatorT*>(this), key, value);
         ++m_size;
         return std::make_pair(current_node, true);
     }
@@ -101,7 +112,7 @@ public:
             child = parent;
             parent = parent->m_parent;
         }
-        child->clean_recursively(*this);
+        child->clean_recursively(*static_cast<AllocatorT*>(this));
         parent->m_children.erase(child.m_key);
         --m_size;
     }
@@ -109,9 +120,7 @@ public:
     void clear()
     {
         if (m_root != nullptr) {
-            m_root->clean_recursively();
-            delete m_root;
-            m_root = nullptr;
+            m_root->clean_recursively(*static_cast<AllocatorT*>(this));
             m_size = 0;
         }
     }
@@ -130,4 +139,6 @@ private:
     tree_node* m_root;
     std::size_t m_size;
 };
+
+} // namespace local
 

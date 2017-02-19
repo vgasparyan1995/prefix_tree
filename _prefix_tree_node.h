@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+
 namespace local {
 
 template <typename CharT,
@@ -23,20 +25,7 @@ struct node
     node(node&&) = delete;
     node& operator= (const node&) = delete;
     node& operator= (node&&) = delete;
-    ~node()
-    {
-        /* Destructor should never get called if
-         * the node is not cleaned recursively or the
-         * associated value is not released.
-         * On the other hand, node is only for internal usage.
-         * So, this assert is temporary. After unit testing
-         * destructor should be defaulted, like:
-         *
-         * ~node() = default;
-         *
-         * */
-        assert(m_children.empty() && m_value == nullptr);
-    }
+    ~node() = default;
 
     template <typename AllocatorT, typename ... Args>
     void set_value(AllocatorT alloc, Args&& ... args)
@@ -75,10 +64,21 @@ struct node
             delete child.second;
             child.second = nullptr;
         }
-        m_children.clean();
+        m_children.clear();
         if (m_value != nullptr) {
             remove_value(alloc);
         }
+    }
+
+    template <typename AllocatorT>
+    node* clone(AllocatorT alloc, node* parent = nullptr)
+    {
+        node* result = new node(parent, m_key);
+        result->set_value(alloc, *m_value);
+        for (const auto& child : m_children) {
+            result->m_children[child.first] = child.second->clone(alloc, result);
+        }
+        return result;
     }
 
     node* m_parent;

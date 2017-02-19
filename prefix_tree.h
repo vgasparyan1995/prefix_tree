@@ -1,16 +1,12 @@
 #pragma once
 
+#include <initializer_list>
 #include <memory>
 
-#include "prefix_tree_iterator.h"
+#include "_prefix_tree_iterator.h"
 #include "_prefix_tree_impl.h"
 
 namespace local {
-
-template <typename StringT,
-          typename MappedT,
-          typename AllocatorT>
-struct prefix_tree_impl;
 
 template <typename StringT,
           typename MappedT,
@@ -21,7 +17,7 @@ public:
     using key_type          = StringT;
     using mapped_type       = MappedT;
     using value_type        = std::pair<const key_type, mapped_type>;
-    using char_type         = key_type::value_type;
+    using char_type         = typename key_type::value_type;
     using size_type         = std::size_t;
     using allocator_type    = AllocatorT;
     using reference         = mapped_type&;
@@ -36,7 +32,7 @@ public:
     explicit prefix_tree(const allocator_type& a = allocator_type());
     prefix_tree(const prefix_tree&) = default;
     prefix_tree(prefix_tree&&) = default;
-    prefix_tree(std::initializer_list<value_type>& il, const allocator_type& a = allocator_type());
+    prefix_tree(std::initializer_list<value_type> il, const allocator_type& a = allocator_type());
 
     template <typename FwdIterT>
     prefix_tree(FwdIterT first, FwdIterT last, const allocator_type& a = allocator_type());
@@ -63,16 +59,16 @@ public:
     /* Iterators */
     iterator begin();
     const_iterator begin() const;
-    const_iterator cbegin();
+    const_iterator cbegin() const;
     iterator end();
     const_iterator end() const;
-    const_iterator cend();
+    const_iterator cend() const;
 
     /* Allocator */
     allocator_type get_allocator() const;
 
 private:
-    using impl_type = prefix_tree_impl<key_type, mapped_type, allocator_type>;
+    using impl_type = local::prefix_tree_impl<key_type, mapped_type, allocator_type>;
 
 private:
     impl_type m_impl;

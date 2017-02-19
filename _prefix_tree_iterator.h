@@ -6,7 +6,7 @@ namespace local {
 
 template <typename StringT,
           typename MappedT,
-          typename AllocatorT = std::allocator<MappedT> >
+          typename AllocatorT>
 class prefix_tree;
 
 template <typename CharT, typename MappedT>
@@ -32,7 +32,6 @@ public:
     {
     }
 
-    template <typename CharT, typename MappedT>
     explicit prefix_tree_iterator(node<CharT, MappedT>* n)
         : m_node{n}
     {
@@ -50,7 +49,24 @@ public:
 
     self& operator++()
     {
-        // TODO!
+        if (!m_node->m_children.empty()) {
+            m_node = m_node->leftmostfirst();
+        } else {
+            bool done = true;
+            do {
+                auto it = m_node->m_parent.find(m_node->m_key);
+                ++it;
+                if (it != m_node->m_parent.end()) {
+                    m_node = it->second;
+                    if (m_node->m_value == nullptr) {
+                        m_node = m_node->leftmostfirst();
+                    }
+                } else {
+                    m_node = m_node->m_parent;
+                    done = false;
+                }
+            } while (!done);
+        }
         return *this;
     }
 
@@ -76,7 +92,7 @@ private:
     friend class prefix_tree_const_iterator;
 
     template <typename StringT,
-              typename MappedT,
+              typename MappedTT,
               typename AllocatorT>
     friend class prefix_tree;
 
@@ -100,9 +116,8 @@ public:
     {
     }
 
-    template <typename CharT, typename MappedT>
-    explicit prefix_tree_iterator(const node<CharT, MappedT>* n)
-        m_node{n}
+    explicit prefix_tree_const_iterator(const node<CharT, MappedT>* n)
+        : m_node{n}
     {
     }
 
@@ -123,7 +138,24 @@ public:
 
     self& operator++()
     {
-        // TODO!
+        if (!m_node->m_children.empty()) {
+            m_node = m_node->leftmostfirst();
+        } else {
+            bool done = true;
+            do {
+                auto it = m_node->m_parent.find(m_node->m_key);
+                ++it;
+                if (it != m_node->m_parent.end()) {
+                    m_node = it->second;
+                    if (m_node->m_value == nullptr) {
+                        m_node = m_node->leftmostfirst();
+                    }
+                } else {
+                    m_node = m_node->m_parent;
+                    done = false;
+                }
+            } while (!done);
+        }
         return *this;
     }
 
@@ -146,7 +178,7 @@ public:
 
 private:
     template <typename StringT,
-              typename MappedT,
+              typename MappedTT,
               typename AllocatorT>
     friend class prefix_tree;
 
