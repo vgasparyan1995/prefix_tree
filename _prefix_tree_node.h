@@ -74,7 +74,9 @@ struct node
     node* clone(AllocatorT alloc, node* parent = nullptr)
     {
         node* result = new node(parent, m_key);
-        result->set_value(alloc, *m_value);
+        if (m_value != nullptr) {
+            result->set_value(alloc, *m_value);
+        }
         for (const auto& child : m_children) {
             result->m_children[child.first] = child.second->clone(alloc, result);
         }
