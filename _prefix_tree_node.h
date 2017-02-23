@@ -1,15 +1,18 @@
 #pragma once
 
+#include <algorithm>
 #include <map>
 
 namespace local {
 
-template <typename CharT,
+template <typename StringT,
+          typename CharT,
           typename MappedT>
 struct node
 {
     using mapped_type = MappedT;
     using key_type = CharT;
+    using string_type = StringT;
     using children_type = std::map<key_type, node*>;
 
     explicit node(node* parent = nullptr,
@@ -35,17 +38,6 @@ struct node
         }
         m_value = alloc.allocate(1);
         alloc.construct(m_value, std::forward<Args>(args)...);
-    }
-
-    template <typename AllocatorT, typename ... Args>
-    void set_value(AllocatorT alloc, const key_type& key, Args&& ... args)
-    {
-        if (m_value != nullptr) {
-            remove_value(alloc);
-        }
-        m_value = alloc.allocate(1);
-        alloc.construct(m_value, std::forward<Args>(args)...);
-        m_key = key;
     }
 
     template <typename AllocatorT>
@@ -81,6 +73,27 @@ struct node
             result->m_children[child.first] = child.second->clone(alloc, result);
         }
         return result;
+    }
+
+    node* leftmostfirst()
+    {
+        node* result = this;
+        do {
+            result = result->m_children.begin()->second;
+        } while (result->m_value == nullptr);
+        return result;
+    }
+
+    string_type key() const
+    {
+        string_type result;
+        auto current_node = this;
+        while (current_node->m_parent != nullptr) {
+            result.push_back(current_node->m_key);
+            current_node = current_node->m_parent;
+        }
+        std::reverse(result.begin(), result.end());
+        return std::move(result);
     }
 
     node* m_parent;

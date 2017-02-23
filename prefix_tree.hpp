@@ -33,7 +33,7 @@ auto CLASS_DECL::find(const key_type& key) const -> const_iterator
 {
     auto node = m_impl.find(key);
     if (node == nullptr) {
-        node = m_impl.m_root;
+        node = m_impl.root();
     }
     return const_iterator(node);
 }
@@ -55,7 +55,7 @@ auto CLASS_DECL::find(const key_type& key) -> iterator
 {
     auto node = m_impl.find(key);
     if (node == nullptr) {
-        node = m_impl.m_root;
+        node = m_impl.root();
     }
     return iterator(node);
 }
@@ -77,8 +77,8 @@ TEMPLATE_DECL
 auto CLASS_DECL::operator[] (const key_type& key) -> reference&
 {
     auto node = m_impl.find(key);
-    if (node = nullptr) {
-        node = m_impl.insert(key, mapped_type());
+    if (node == nullptr) {
+        node = m_impl.insert(key, mapped_type()).first;
     }
     return *(node->m_value);
 }
@@ -97,7 +97,7 @@ auto CLASS_DECL::erase(iterator pos) -> iterator
 {
     auto it = pos;
     ++it;
-    erase(pos.m_node);
+    m_impl.erase(pos.m_node);
     return it;
 }
 

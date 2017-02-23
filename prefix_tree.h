@@ -24,8 +24,8 @@ public:
     using const_reference   = const mapped_type&;
     using pointer           = typename std::allocator_traits<allocator_type>::pointer;
     using const_pointer     = typename std::allocator_traits<allocator_type>::const_pointer;
-    using iterator          = prefix_tree_iterator<char_type, mapped_type>;
-    using const_iterator    = prefix_tree_const_iterator<char_type, mapped_type>;
+    using iterator          = prefix_tree_iterator<key_type, char_type, mapped_type>;
+    using const_iterator    = prefix_tree_const_iterator<key_type, char_type, mapped_type>;
 
 public:
     /* Constructors, assignment and destructor */
