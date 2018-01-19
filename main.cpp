@@ -6,6 +6,17 @@
 
 #include "prefix_tree.h"
 
+template <typename MSG_T>
+void BOOL_TEST(const bool value, MSG_T&& msg)
+{
+    std::cout << msg;
+    if (value) {
+        std::cout << " PASSED." << std::endl;
+    } else {
+        std::cout << " FAILED." << std::endl;
+    }
+}
+
 template <typename ContainerT>
 void init(ContainerT& a)
 {
@@ -142,8 +153,23 @@ void empty_find_test()
     }
 }
 
+void erase_test()
+{
+    local::prefix_tree<std::string, int> pt;
+    pt.insert(std::make_pair("abcdd", 0));
+    pt.insert(std::make_pair("abcee", 0));
+    pt.insert(std::make_pair("abcff", 0));
+    pt.insert(std::make_pair("abc", 1));
+    BOOL_TEST(pt.size() == 4, "Initial size");
+    pt.erase("abc");
+    BOOL_TEST(pt.size() == 3, "After erase size");
+    BOOL_TEST(pt.find("abc") == pt.end(), "Right element erased");
+    BOOL_TEST(pt.find("abcdd") != pt.end(), "Wrong element not erased");
+}
+
 int main()
 {
     //comparison_test();
     empty_find_test();
+    erase_test();
 }

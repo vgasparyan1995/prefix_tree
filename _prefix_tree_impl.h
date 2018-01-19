@@ -108,15 +108,19 @@ public:
 
     void erase(tree_node* node)
     {
+        --m_size;
+        if (!node->is_leaf()) {
+            node->remove_value(*static_cast<AllocatorT*>(this));
+            return;
+        }
         auto child = node;
         auto parent = node->m_parent;
-        while (parent->m_children.size() == 1) {
+        while (parent->m_children.size() == 1 && parent->m_value == nullptr) {
             child = parent;
             parent = parent->m_parent;
         }
         child->clean_recursively(*static_cast<AllocatorT*>(this));
         parent->m_children.erase(child->m_key);
-        --m_size;
     }
 
     void clear()

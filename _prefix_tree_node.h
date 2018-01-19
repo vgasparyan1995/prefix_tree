@@ -96,6 +96,11 @@ struct node
         return std::move(result);
     }
 
+    bool is_leaf() const
+    {
+        return m_children.empty();
+    }
+
     node* m_parent;
     key_type m_key;
     mapped_type* m_value;
