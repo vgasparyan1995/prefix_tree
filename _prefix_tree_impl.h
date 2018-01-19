@@ -77,10 +77,12 @@ public:
         for (const auto character : key) {
             auto it = current_node->m_children.find(character);
             if (it == current_node->m_children.end()) {
-                current_node = nullptr;
-                break;
+                return nullptr;
             }
             current_node = it->second;
+        }
+        if (current_node->m_value == nullptr) {
+            return nullptr;
         }
         return current_node;
     }

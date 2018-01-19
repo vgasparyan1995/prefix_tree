@@ -96,7 +96,7 @@ void find4(ContainerT& a, const std::string& container_name)
     std::cout << "Time passed on find with " << container_name << " container: " << std::chrono::duration<double>(end - start).count() << " s.\n";
 }
 
-int main()
+void comparison_test()
 {
     local::prefix_tree<std::string, int> pt;
     std::unordered_map<std::string, int> um;
@@ -122,4 +122,28 @@ int main()
     find4(pt, "prefix_tree");
     find4(um, "unordered_map");
     find4(mm, "map");
+}
+
+void empty_find_test()
+{
+    local::prefix_tree<std::string, int> pt;
+    pt.insert(std::make_pair("abcde", 5));
+    auto existing_iter = pt.find("abcde");
+    auto nonexisting_iter = pt.find("abc");
+    if (existing_iter != pt.end()) {
+        std::cout << "Find existing element test PASSED." << std::endl;
+    } else {
+        std::cout << "Find existing element test FAILED." << std::endl;
+    }
+    if (nonexisting_iter == pt.end()) {
+        std::cout << "Find nonexisting element test PASSED." << std::endl;
+    } else {
+        std::cout << "Find nonexisting element test FAILED." << std::endl;
+    }
+}
+
+int main()
+{
+    //comparison_test();
+    empty_find_test();
 }
