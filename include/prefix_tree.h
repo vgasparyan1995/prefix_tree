@@ -67,6 +67,31 @@ public:
     /* Allocator */
     allocator_type get_allocator() const;
 
+    /* Non member functions */
+    template <typename StringT, typename MappedT, typename AllocatorT>
+    friend bool operator== (const prefix_tree<StringT, MappedT, AllocatorT>& lhs,
+                            const prefix_tree<StringT, MappedT, AllocatorT>& rhs);
+
+    template <typename StringT, typename MappedT, typename AllocatorT>
+    friend bool operator!= (const prefix_tree<StringT, MappedT, AllocatorT>& lhs,
+                            const prefix_tree<StringT, MappedT, AllocatorT>& rhs);
+
+    template <typename StringT, typename MappedT, typename AllocatorT>
+    friend bool operator< (const prefix_tree<StringT, MappedT, AllocatorT>& lhs,
+                           const prefix_tree<StringT, MappedT, AllocatorT>& rhs);
+
+    template <typename StringT, typename MappedT, typename AllocatorT>
+    friend bool operator<= (const prefix_tree<StringT, MappedT, AllocatorT>& lhs,
+                            const prefix_tree<StringT, MappedT, AllocatorT>& rhs);
+
+    template <typename StringT, typename MappedT, typename AllocatorT>
+    friend bool operator> (const prefix_tree<StringT, MappedT, AllocatorT>& lhs,
+                           const prefix_tree<StringT, MappedT, AllocatorT>& rhs);
+
+    template <typename StringT, typename MappedT, typename AllocatorT>
+    friend bool operator>= (const prefix_tree<StringT, MappedT, AllocatorT>& lhs,
+                            const prefix_tree<StringT, MappedT, AllocatorT>& rhs);
+
 private:
     using impl_type = local::prefix_tree_impl<key_type, mapped_type, allocator_type>;
 
@@ -74,6 +99,6 @@ private:
     impl_type m_impl;
 };
 
-#include "prefix_tree.hpp"
-
 } // namespace local
+
+#include "prefix_tree.hpp"
