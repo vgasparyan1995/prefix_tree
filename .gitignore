@@ -1,0 +1,4 @@
+*.o
+example/example
+performance_test/ptest
+unit_test/utest

@@ -13,7 +13,7 @@ template <typename StringT, typename CharT, typename MappedT>
 class prefix_tree_const_iterator;
 
 template <typename StringT, typename CharT, typename MappedT>
-class node;
+struct node;
 
 template <typename StringT, typename CharT, typename MappedT>
 class prefix_tree_iterator
@@ -41,6 +41,22 @@ public:
     {
     }
 
+    prefix_tree_iterator(const prefix_tree_iterator& other)
+        : m_node(other.m_node)
+        , m_pair(new value_type(*other.m_pair))
+    {
+    }
+
+    prefix_tree_iterator& operator= (const prefix_tree_iterator& other)
+    {
+        if (this == &other) {
+            return *this;
+        }
+        m_node = other.m_node;
+        m_pair.reset(new value_type(*other.m_pair));
+        return *this;
+    }
+
     reference operator*() const
     {
         return *m_pair;
@@ -48,7 +64,7 @@ public:
 
     pointer operator->() const
     {
-        return m_pair;
+        return m_pair.get();
     }
 
     self& operator++()
@@ -141,6 +157,22 @@ public:
     {
     }
 
+    prefix_tree_const_iterator(const prefix_tree_const_iterator& other)
+        : m_node(other.m_node)
+        , m_pair(new value_type(*other.m_pair))
+    {
+    }
+
+    prefix_tree_const_iterator& operator= (const prefix_tree_const_iterator& other)
+    {
+        if (this == &other) {
+            return *this;
+        }
+        m_node = other.m_node;
+        m_pair.reset(new value_type(*other.m_pair));
+        return *this;
+    }
+
     reference operator*() const
     {
         return *m_pair;
@@ -148,7 +180,7 @@ public:
 
     pointer operator->() const
     {
-        return m_pair;
+        return m_pair.get();
     }
 
     self& operator++()

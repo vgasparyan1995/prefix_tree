@@ -175,8 +175,8 @@ bool operator< (const prefix_tree<StringT, MappedT, AllocatorT>& lhs,
                 const prefix_tree<StringT, MappedT, AllocatorT>& rhs)
 {
     return std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end(),
-            [] (const prefix_tree<StringT, MappedT, AllocatorT>::value_type& lhs,
-                const prefix_tree<StringT, MappedT, AllocatorT>::value_type& rhs)
+            [] (const typename prefix_tree<StringT, MappedT, AllocatorT>::value_type& lhs,
+                const typename prefix_tree<StringT, MappedT, AllocatorT>::value_type& rhs)
             {
                 return lhs.first < rhs.first;
             });
@@ -194,8 +194,8 @@ bool operator> (const prefix_tree<StringT, MappedT, AllocatorT>& lhs,
                 const prefix_tree<StringT, MappedT, AllocatorT>& rhs)
 {
     return std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end(),
-            [] (const prefix_tree<StringT, MappedT, AllocatorT>::value_type& lhs,
-                const prefix_tree<StringT, MappedT, AllocatorT>::value_type& rhs)
+            [] (const typename prefix_tree<StringT, MappedT, AllocatorT>::value_type& lhs,
+                const typename prefix_tree<StringT, MappedT, AllocatorT>::value_type& rhs)
             {
                 return lhs.first > rhs.first;
             });

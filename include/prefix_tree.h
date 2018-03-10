@@ -68,29 +68,29 @@ public:
     allocator_type get_allocator() const;
 
     /* Non member functions */
-    template <typename StringT, typename MappedT, typename AllocatorT>
-    friend bool operator== (const prefix_tree<StringT, MappedT, AllocatorT>& lhs,
-                            const prefix_tree<StringT, MappedT, AllocatorT>& rhs);
+    template <typename ST, typename MT, typename AT>
+    friend bool operator== (const prefix_tree<ST, MT, AT>& lhs,
+                            const prefix_tree<ST, MT, AT>& rhs);
 
-    template <typename StringT, typename MappedT, typename AllocatorT>
-    friend bool operator!= (const prefix_tree<StringT, MappedT, AllocatorT>& lhs,
-                            const prefix_tree<StringT, MappedT, AllocatorT>& rhs);
+    template <typename ST, typename MT, typename AT>
+    friend bool operator!= (const prefix_tree<ST, MT, AT>& lhs,
+                            const prefix_tree<ST, MT, AT>& rhs);
 
-    template <typename StringT, typename MappedT, typename AllocatorT>
-    friend bool operator< (const prefix_tree<StringT, MappedT, AllocatorT>& lhs,
-                           const prefix_tree<StringT, MappedT, AllocatorT>& rhs);
+    template <typename ST, typename MT, typename AT>
+    friend bool operator< (const prefix_tree<ST, MT, AT>& lhs,
+                           const prefix_tree<ST, MT, AT>& rhs);
 
-    template <typename StringT, typename MappedT, typename AllocatorT>
-    friend bool operator<= (const prefix_tree<StringT, MappedT, AllocatorT>& lhs,
-                            const prefix_tree<StringT, MappedT, AllocatorT>& rhs);
+    template <typename ST, typename MT, typename AT>
+    friend bool operator<= (const prefix_tree<ST, MT, AT>& lhs,
+                            const prefix_tree<ST, MT, AT>& rhs);
 
-    template <typename StringT, typename MappedT, typename AllocatorT>
-    friend bool operator> (const prefix_tree<StringT, MappedT, AllocatorT>& lhs,
-                           const prefix_tree<StringT, MappedT, AllocatorT>& rhs);
+    template <typename ST, typename MT, typename AT>
+    friend bool operator> (const prefix_tree<ST, MappedT, AT>& lhs,
+                           const prefix_tree<ST, MappedT, AT>& rhs);
 
-    template <typename StringT, typename MappedT, typename AllocatorT>
-    friend bool operator>= (const prefix_tree<StringT, MappedT, AllocatorT>& lhs,
-                            const prefix_tree<StringT, MappedT, AllocatorT>& rhs);
+    template <typename ST, typename MT, typename AT>
+    friend bool operator>= (const prefix_tree<ST, MT, AT>& lhs,
+                            const prefix_tree<ST, MT, AT>& rhs);
 
 private:
     using impl_type = local::prefix_tree_impl<key_type, mapped_type, allocator_type>;
