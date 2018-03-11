@@ -73,7 +73,7 @@ auto prefix_tree<StringT, MappedT, AllocatorT>::insert(const value_type& value) 
 }
 
 template <typename StringT, typename MappedT, typename AllocatorT>
-auto prefix_tree<StringT, MappedT, AllocatorT>::operator[] (const key_type& key) -> reference&
+auto prefix_tree<StringT, MappedT, AllocatorT>::operator[] (const key_type& key) -> reference
 {
     auto node = m_impl.find(key);
     if (node == nullptr) {

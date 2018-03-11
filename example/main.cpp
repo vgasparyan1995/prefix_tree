@@ -36,8 +36,8 @@ int main()
     // Mutators
     auto insertion_result = pt.insert({ "five", 5 });
     auto insertion_result2 = pt.insert("six", 6);
-    auto ref_to_six = pt["six"];
-    auto ref_to_new_seven = pt["seven"];
+    auto& ref_to_six = pt["six"];
+    auto& ref_to_new_seven = pt["seven"];
     ref_to_new_seven = ref_to_six;
     std::cout << "Six: " << pt["six"] << '\n';
     std::cout << "Seven: " << pt["seven"] << '\n';

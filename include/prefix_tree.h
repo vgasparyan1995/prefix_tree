@@ -51,7 +51,7 @@ public:
     iterator find(const key_type& key);
     std::pair<iterator, bool> insert(const key_type& key, const mapped_type& value);
     std::pair<iterator, bool> insert(const value_type& value);
-    reference& operator[] (const key_type& key);
+    reference operator[] (const key_type& key);
     void erase(const key_type& key);
     iterator erase(iterator pos);
     void clear();
