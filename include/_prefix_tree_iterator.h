@@ -89,7 +89,7 @@ public:
                 }
             } while (!done);
         }
-        m_pair.reset(new value_type(m_node->key(), m_pair->second));
+        m_pair.reset(new value_type(m_node->key(), *m_node->m_value));
         return *this;
     }
 
@@ -205,7 +205,7 @@ public:
                 }
             } while (!done);
         }
-        m_pair.reset(new value_type(m_node->key(), m_pair->second));
+        m_pair.reset(new value_type(m_node->key(), *m_node->m_value));
         return *this;
     }
 

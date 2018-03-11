@@ -36,6 +36,7 @@ public:
         , m_size(other.m_size)
     {
         other.m_root = nullptr;
+        other.m_size = 0;
     }
 
     prefix_tree_impl& operator= (const prefix_tree_impl& other)
@@ -55,6 +56,7 @@ public:
             m_root = other.m_root;
             other.m_root = nullptr;
             m_size = other.m_size;
+            other.m_size = 0;
         }
         return *this;
     }
