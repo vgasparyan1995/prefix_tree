@@ -53,6 +53,10 @@ public:
     {
         if (this != &other) {
             *static_cast<AllocatorT*>(this) = std::move(static_cast<AllocatorT>(other));
+            if (m_root != nullptr) {
+                clear();
+                delete m_root;
+            }
             m_root = other.m_root;
             other.m_root = nullptr;
             m_size = other.m_size;
@@ -69,6 +73,11 @@ public:
     }
 
     tree_node* root()
+    {
+        return m_root;
+    }
+
+    const tree_node* root() const
     {
         return m_root;
     }

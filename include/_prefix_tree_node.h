@@ -84,6 +84,15 @@ struct node
         return result;
     }
 
+    const node* leftmostfirst() const
+    {
+        const node* result = this;
+        do {
+            result = result->m_children.begin()->second;
+        } while (result->m_value == nullptr);
+        return result;
+    }
+
     string_type key() const
     {
         string_type result;

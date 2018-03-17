@@ -190,9 +190,9 @@ public:
         } else {
             bool done = true;
             do {
-                auto it = m_node->m_parent.find(m_node->m_key);
+                auto it = m_node->m_parent->m_children.find(m_node->m_key);
                 ++it;
-                if (it != m_node->m_parent.end()) {
+                if (it != m_node->m_parent->m_children.end()) {
                     m_node = it->second;
                     if (m_node->m_value == nullptr) {
                         m_node = m_node->leftmostfirst();
