@@ -146,7 +146,6 @@ END_TEST_GROUP()
 
 void test_iterators()
 {
-    /*
 BEGIN_TEST_GROUP("Iterators")
 
     local::prefix_tree<std::string, int> pt;
@@ -161,15 +160,13 @@ BEGIN_TEST_GROUP("Iterators")
         pt.insert({ key, i });
         m.insert({ key, i });
     }
-
-    TEST(std::equal(pt.cbegin(), pt.cend(), m.cbegin()), "ITER2");
+    TEST(std::equal(pt.begin(), pt.end(), m.begin()), "ITER2");
 
     auto it = pt.begin();
     std::advance(it, pt.size());
     TEST(it == pt.end(), "ITER3");
 
 END_TEST_GROUP()
-    */
 }
 
 void test_operators()

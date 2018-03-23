@@ -2,6 +2,8 @@
 
 #include <iterator>
 
+#include "_prefix_tree_util.h"
+
 namespace local {
 
 template <typename StringT,
@@ -22,7 +24,7 @@ public:
     using iterator_category = std::forward_iterator_tag;
     using key_type = StringT;
     using mapped_type = MappedT;
-    using value_type = std::pair<const key_type, mapped_type&>;
+    using value_type = unsafe_pair<const key_type, mapped_type&>;
     using difference_type = std::ptrdiff_t;
     using self = prefix_tree_iterator<StringT, CharT, MappedT>;
     using pointer = value_type*;
@@ -80,9 +82,8 @@ public:
                     m_node = it->second;
                     if (m_node->m_value == nullptr) {
                         m_node = m_node->leftmostfirst();
-                    } else {
-                        done = true;
                     }
+                    done = true;
                 } else {
                     m_node = m_node->m_parent;
                     done = (m_node->m_parent == nullptr);
@@ -132,7 +133,7 @@ public:
     using iterator_category = std::forward_iterator_tag;
     using key_type = StringT;
     using mapped_type = MappedT;
-    using value_type = std::pair<const key_type, mapped_type&>;
+    using value_type = unsafe_pair<const key_type, mapped_type&>;
     using difference_type = std::ptrdiff_t;
     using self = prefix_tree_const_iterator<StringT, CharT, MappedT>;
     using pointer = const value_type*;
@@ -196,9 +197,8 @@ public:
                     m_node = it->second;
                     if (m_node->m_value == nullptr) {
                         m_node = m_node->leftmostfirst();
-                    } else {
-                        done = true;
                     }
+                    done = true;
                 } else {
                     m_node = m_node->m_parent;
                     done = (m_node->m_parent == nullptr);

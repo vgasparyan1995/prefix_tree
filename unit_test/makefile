@@ -14,4 +14,4 @@ all: $(OBJECTS)
 	$(CC) $(CPPFLAGS) $< -o $@
 
 clean:
-	rm $(EXECUTABLE) $(OBJECTS)
+	rm -f $(EXECUTABLE) $(OBJECTS)
