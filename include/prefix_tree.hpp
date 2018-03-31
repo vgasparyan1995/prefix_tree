@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <limits>
+#include <stdexcept>
 
 namespace local {
 
@@ -54,6 +55,26 @@ template <typename StringT, typename MappedT, typename AllocatorT>
 bool prefix_tree<StringT, MappedT, AllocatorT>::empty() const
 {
     return m_impl.empty();
+}
+
+template <typename StringT, typename MappedT, typename AllocatorT>
+auto prefix_tree<StringT, MappedT, AllocatorT>::at(const key_type& key) -> reference
+{
+    auto node = m_impl.find(key);
+    if (node == nullptr) {
+        throw std::out_of_range("prefix_tree::at");
+    }
+    return *(node->m_value);
+}
+
+template <typename StringT, typename MappedT, typename AllocatorT>
+auto prefix_tree<StringT, MappedT, AllocatorT>::at(const key_type& key) const -> const_reference
+{
+    auto node = m_impl.find(key);
+    if (node == nullptr) {
+        throw std::out_of_range("prefix_tree::at");
+    }
+    return *(node->m_value);
 }
 
 template <typename StringT, typename MappedT, typename AllocatorT>

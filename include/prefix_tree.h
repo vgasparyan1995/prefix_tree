@@ -47,6 +47,8 @@ public:
     size_type size() const;
     size_type max_size() const;
     bool empty() const;
+    reference at(const key_type& key);
+    const_reference at(const key_type& key) const;
 
     /* Mutators */
     iterator find(const key_type& key);
