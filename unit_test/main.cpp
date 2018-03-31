@@ -90,6 +90,8 @@ BEGIN_TEST_GROUP("Selectors")
 
     iter = pt2.find("nine");
     TEST(iter == pt2.end(), "SEL4");
+    
+    TEST((pt.max_size() == std::numeric_limits<local::prefix_tree<std::string, int>::size_type>::max()), "SEL5");
 
 END_TEST_GROUP()
 }

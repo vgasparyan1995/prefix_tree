@@ -45,6 +45,7 @@ public:
     /* Selectors */
     const_iterator find(const key_type& key) const;
     size_type size() const;
+    size_type max_size() const;
     bool empty() const;
 
     /* Mutators */

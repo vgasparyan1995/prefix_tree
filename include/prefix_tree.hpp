@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <limits>
 
 namespace local {
 
@@ -41,6 +42,12 @@ template <typename StringT, typename MappedT, typename AllocatorT>
 auto prefix_tree<StringT, MappedT, AllocatorT>::size() const -> size_type
 {
     return m_impl.size();
+}
+
+template <typename StringT, typename MappedT, typename AllocatorT>
+auto prefix_tree<StringT, MappedT, AllocatorT>::max_size() const -> size_type
+{
+    return std::numeric_limits<size_type>::max();
 }
 
 template <typename StringT, typename MappedT, typename AllocatorT>
