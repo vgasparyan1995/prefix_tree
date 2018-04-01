@@ -101,6 +101,12 @@ auto prefix_tree<StringT, MappedT, AllocatorT>::insert(const value_type& value) 
 }
 
 template <typename StringT, typename MappedT, typename AllocatorT>
+auto prefix_tree<StringT, MappedT, AllocatorT>::insert(const_iterator hint, const value_type& value) -> iterator
+{
+    return insert(value).first;
+}
+
+template <typename StringT, typename MappedT, typename AllocatorT>
 auto prefix_tree<StringT, MappedT, AllocatorT>::operator[] (const key_type& key) -> reference
 {
     auto node = m_impl.find(key);
