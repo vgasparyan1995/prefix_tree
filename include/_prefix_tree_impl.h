@@ -10,7 +10,7 @@ template <typename StringT,
 class prefix_tree_impl : public AllocatorT
 {
 private:
-    using tree_node = local::node<StringT, typename StringT::value_type, MappedT>;
+    using tree_node = local::node<StringT, typename StringT::value_type, std::pair<const StringT, MappedT> >;
     using key_type = StringT;
     using mapped_type = MappedT;
 
@@ -112,7 +112,7 @@ public:
         if (current_node->m_value != nullptr) {
             return std::make_pair(current_node, false);
         }
-        current_node->set_value(*static_cast<AllocatorT*>(this), value);
+        current_node->set_value(*static_cast<AllocatorT*>(this), key, value);
         ++m_size;
         return std::make_pair(current_node, true);
     }

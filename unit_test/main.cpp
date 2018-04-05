@@ -152,6 +152,7 @@ BEGIN_TEST_GROUP("Iterators")
 
     local::prefix_tree<std::string, int> pt;
     TEST(pt.begin() == pt.end(), "ITER1");
+    TEST(pt.rbegin() == pt.rend(), "ITER2");
 
     std::map<std::string, int> m;
     for (int i = 0; i < 100; ++i) {
@@ -162,11 +163,16 @@ BEGIN_TEST_GROUP("Iterators")
         pt.insert({ key, i });
         m.insert({ key, i });
     }
-    TEST(std::equal(pt.begin(), pt.end(), m.begin()), "ITER2");
+    TEST(std::equal(pt.begin(), pt.end(), m.begin()), "ITER3");
+    TEST(std::equal(pt.rbegin(), pt.rend(), m.rbegin()), "ITER4");
 
     auto it = pt.begin();
     std::advance(it, pt.size());
-    TEST(it == pt.end(), "ITER3");
+    TEST(it == pt.end(), "ITER5");
+
+    auto rit = pt.rbegin();
+    std::advance(rit, pt.size());
+    TEST(rit == pt.rend(), "ITER6");
 
 END_TEST_GROUP()
 }

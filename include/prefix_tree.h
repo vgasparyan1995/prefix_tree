@@ -10,22 +10,27 @@ namespace local {
 
 template <typename StringT,
           typename MappedT,
-          typename AllocatorT = std::allocator<MappedT> >
+          typename AllocatorT = std::allocator<std::pair<const StringT, MappedT> > >
 class prefix_tree
 {
 public:
-    using key_type          = StringT;
-    using mapped_type       = MappedT;
-    using value_type        = std::pair<const key_type, mapped_type>;
-    using char_type         = typename key_type::value_type;
-    using size_type         = std::size_t;
-    using allocator_type    = AllocatorT;
-    using reference         = mapped_type&;
-    using const_reference   = const mapped_type&;
-    using pointer           = typename std::allocator_traits<allocator_type>::pointer;
-    using const_pointer     = typename std::allocator_traits<allocator_type>::const_pointer;
-    using iterator          = prefix_tree_iterator<key_type, char_type, mapped_type>;
-    using const_iterator    = prefix_tree_const_iterator<key_type, char_type, mapped_type>;
+    using key_type                  = StringT;
+    using mapped_type               = MappedT;
+    using value_type                = std::pair<const key_type, mapped_type>;
+    using char_type                 = typename key_type::value_type;
+    using size_type                 = std::size_t;
+    using allocator_type            = AllocatorT;
+    using reference                 = mapped_type&;
+    using const_reference           = const mapped_type&;
+    using pointer                   = typename std::allocator_traits<allocator_type>::pointer;
+    using const_pointer             = typename std::allocator_traits<allocator_type>::const_pointer;
+    using iterator                  = prefix_tree_iterator<key_type, char_type, mapped_type>;
+    using const_iterator            = prefix_tree_const_iterator<key_type, char_type, mapped_type>;
+    using reverse_iterator          = std::reverse_iterator<iterator>;
+    using const_reverse_iterator    = std::reverse_iterator<const_iterator>;
+
+private:
+    using self = prefix_tree<key_type, mapped_type, allocator_type>;
 
 public:
     /* Constructors, assignment and destructor */
@@ -67,6 +72,12 @@ public:
     iterator end();
     const_iterator end() const;
     const_iterator cend() const;
+    reverse_iterator rbegin();
+    const_reverse_iterator rbegin() const;
+    const_reverse_iterator crbegin() const;
+    reverse_iterator rend();
+    const_reverse_iterator rend() const;
+    const_reverse_iterator crend() const;
 
     /* Allocator */
     allocator_type get_allocator() const;

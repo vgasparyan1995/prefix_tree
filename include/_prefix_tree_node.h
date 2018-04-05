@@ -7,17 +7,17 @@ namespace local {
 
 template <typename StringT,
           typename CharT,
-          typename MappedT>
+          typename ValueT>
 struct node
 {
-    using mapped_type = MappedT;
+    using value_type = ValueT;
     using key_type = CharT;
     using string_type = StringT;
     using children_type = std::map<key_type, node*>;
 
     explicit node(node* parent = nullptr,
                   const key_type key = key_type(),
-                  mapped_type* value = nullptr)
+                  value_type* value = nullptr)
         : m_parent{parent}
         , m_key{key}
         , m_value{value}
@@ -77,18 +77,36 @@ struct node
 
     node* leftmostfirst()
     {
-        node* result = this;
-        do {
-            result = result->m_children.begin()->second;
-        } while (result->m_value == nullptr);
-        return result;
+        return const_cast<node*>(const_cast<const node*>(this)->leftmostfirst());
     }
 
     const node* leftmostfirst() const
     {
-        const node* result = this;
+        auto result = this;
         do {
-            result = result->m_children.begin()->second;
+            auto it = result->m_children.begin();
+            if (it == result->m_children.end()) {
+                break;
+            }
+            result = it->second;
+        } while (result->m_value == nullptr);
+        return result;
+    }
+
+    node* rightmostfirst()
+    {
+        return const_cast<node*>(const_cast<const node*>(this)->rightmostfirst());
+    }
+
+    const node* rightmostfirst() const
+    {
+        auto result = this;
+        do {
+            auto it = result->m_children.rbegin();
+            if (it == result->m_children.rend()) {
+                break;
+            }
+            result = it->second;
         } while (result->m_value == nullptr);
         return result;
     }
@@ -112,7 +130,7 @@ struct node
 
     node* m_parent;
     key_type m_key;
-    mapped_type* m_value;
+    value_type* m_value;
     children_type m_children;
 };
 

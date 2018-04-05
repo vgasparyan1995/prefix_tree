@@ -14,38 +14,37 @@ class prefix_tree;
 template <typename StringT, typename CharT, typename MappedT>
 class prefix_tree_const_iterator;
 
-template <typename StringT, typename CharT, typename MappedT>
+template <typename StringT, typename CharT, typename ValueT>
 struct node;
 
 template <typename StringT, typename CharT, typename MappedT>
 class prefix_tree_iterator
 {
+private:
+    using key_type      = StringT;
+    using mapped_type   = MappedT;
+    using self          = prefix_tree_iterator<key_type, CharT, mapped_type>;
+
 public:
-    using iterator_category = std::forward_iterator_tag;
-    using key_type = StringT;
-    using mapped_type = MappedT;
-    using value_type = unsafe_pair<const key_type, mapped_type&>;
-    using difference_type = std::ptrdiff_t;
-    using self = prefix_tree_iterator<StringT, CharT, MappedT>;
-    using pointer = value_type*;
-    using reference = value_type&;
+    using iterator_category = std::bidirectional_iterator_tag;
+    using value_type        = std::pair<const key_type, mapped_type>;
+    using difference_type   = std::ptrdiff_t;
+    using pointer           = value_type*;
+    using reference         = value_type&;
 
 public:
     prefix_tree_iterator()
         : m_node(nullptr)
-        , m_pair(nullptr)
     {
     }
 
-    explicit prefix_tree_iterator(node<StringT, CharT, MappedT>* n)
+    explicit prefix_tree_iterator(node<StringT, CharT, value_type>* n)
         : m_node{n}
-        , m_pair(new value_type(n->key(), *n->m_value))
     {
     }
 
     prefix_tree_iterator(const prefix_tree_iterator& other)
         : m_node(other.m_node)
-        , m_pair(new value_type(*other.m_pair))
     {
     }
 
@@ -55,18 +54,17 @@ public:
             return *this;
         }
         m_node = other.m_node;
-        m_pair.reset(new value_type(*other.m_pair));
         return *this;
     }
 
     reference operator*() const
     {
-        return *m_pair;
+        return *m_node->m_value;
     }
 
     pointer operator->() const
     {
-        return m_pair.get();
+        return m_node->m_value;
     }
 
     self& operator++()
@@ -90,7 +88,6 @@ public:
                 }
             } while (!done);
         }
-        m_pair.reset(new value_type(m_node->key(), *m_node->m_value));
         return *this;
     }
 
@@ -98,6 +95,36 @@ public:
     {
         auto tmp = *this;
         ++(*this);
+        return tmp;
+    }
+
+    self& operator--()
+    {
+        if (!m_node->m_children.empty()) {
+            m_node = m_node->rightmostfirst();
+        } else {
+            bool done = true;
+            do {
+                auto it = std::make_reverse_iterator(m_node->m_parent->m_children.find(m_node->m_key));
+                if (it != m_node->m_parent->m_children.rend()) {
+                    m_node = it->second;
+                    if (m_node->m_value == nullptr) {
+                        m_node = m_node->rightmostfirst();
+                    }
+                    done = true;
+                } else {
+                    m_node = m_node->m_parent;
+                    done = (m_node->m_parent == nullptr);
+                }
+            } while (!done);
+        }
+        return *this;
+    }
+
+    self operator--(int)
+    {
+        auto tmp = *this;
+        --(*this);
         return tmp;
     }
 
@@ -122,45 +149,42 @@ private:
               typename AllocatorT>
     friend class prefix_tree;
 
-    node<StringT, CharT, MappedT>* m_node;
-    std::unique_ptr<value_type> m_pair;
+    node<StringT, CharT, value_type>*   m_node;
 };
 
 template <typename StringT, typename CharT, typename MappedT>
 class prefix_tree_const_iterator
 {
+private:
+    using key_type      = StringT;
+    using mapped_type   = MappedT;
+    using self          = prefix_tree_const_iterator<key_type, CharT, mapped_type>;
+
 public:
     using iterator_category = std::forward_iterator_tag;
-    using key_type = StringT;
-    using mapped_type = MappedT;
-    using value_type = unsafe_pair<const key_type, mapped_type&>;
-    using difference_type = std::ptrdiff_t;
-    using self = prefix_tree_const_iterator<StringT, CharT, MappedT>;
-    using pointer = const value_type*;
-    using reference = const value_type&;
+    using value_type        = std::pair<const key_type, mapped_type>;
+    using difference_type   = std::ptrdiff_t;
+    using pointer           = const value_type*;
+    using reference         = const value_type&;
 
 public:
     prefix_tree_const_iterator()
         : m_node(nullptr)
-        , m_pair(nullptr)
     {
     }
 
-    explicit prefix_tree_const_iterator(const node<StringT, CharT, MappedT>* n)
+    explicit prefix_tree_const_iterator(const node<StringT, CharT, value_type>* n)
         : m_node{n}
-        , m_pair(new value_type(n->key(), *n->m_value))
     {
     }
 
     explicit prefix_tree_const_iterator(const prefix_tree_iterator<StringT, CharT, MappedT> iter)
         : m_node{iter.m_node}
-        , m_pair(new value_type(*(iter.m_pair)))
     {
     }
 
     prefix_tree_const_iterator(const prefix_tree_const_iterator& other)
         : m_node(other.m_node)
-        , m_pair(new value_type(*other.m_pair))
     {
     }
 
@@ -170,18 +194,17 @@ public:
             return *this;
         }
         m_node = other.m_node;
-        m_pair.reset(new value_type(*other.m_pair));
         return *this;
     }
 
     reference operator*() const
     {
-        return *m_pair;
+        return *m_node->m_value;
     }
 
     pointer operator->() const
     {
-        return m_pair.get();
+        return m_node->m_value;
     }
 
     self& operator++()
@@ -205,7 +228,6 @@ public:
                 }
             } while (!done);
         }
-        m_pair.reset(new value_type(m_node->key(), *m_node->m_value));
         return *this;
     }
 
@@ -213,6 +235,36 @@ public:
     {
         auto tmp = *this;
         ++(*this);
+        return tmp;
+    }
+
+    self& operator--()
+    {
+        if (!m_node->m_children.empty()) {
+            m_node = m_node->rightmostfirst();
+        } else {
+            bool done = true;
+            do {
+                auto it = std::make_reverse_iterator(m_node->m_parent->m_children.find(m_node->m_key));
+                if (it != m_node->m_parent->m_children.rend()) {
+                    m_node = it->second;
+                    if (m_node->m_value == nullptr) {
+                        m_node = m_node->rightmostfirst();
+                    }
+                    done = true;
+                } else {
+                    m_node = m_node->m_parent;
+                    done = (m_node->m_parent == nullptr);
+                }
+            } while (!done);
+        }
+        return *this;
+    }
+
+    self operator--(int)
+    {
+        auto tmp = *this;
+        --(*this);
         return tmp;
     }
 
@@ -232,8 +284,7 @@ private:
               typename AllocatorT>
     friend class prefix_tree;
 
-    const node<StringT, CharT, MappedT>* m_node;
-    std::unique_ptr<value_type> m_pair;
+    const node<StringT, CharT, value_type>* m_node;
 };
 
-}
+} // namespace local

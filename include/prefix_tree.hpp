@@ -60,11 +60,7 @@ bool prefix_tree<StringT, MappedT, AllocatorT>::empty() const
 template <typename StringT, typename MappedT, typename AllocatorT>
 auto prefix_tree<StringT, MappedT, AllocatorT>::at(const key_type& key) -> reference
 {
-    auto node = m_impl.find(key);
-    if (node == nullptr) {
-        throw std::out_of_range("prefix_tree::at");
-    }
-    return *(node->m_value);
+    return const_cast<const_reference>(const_cast<self*>(this)->at(key));
 }
 
 template <typename StringT, typename MappedT, typename AllocatorT>
@@ -74,7 +70,7 @@ auto prefix_tree<StringT, MappedT, AllocatorT>::at(const key_type& key) const ->
     if (node == nullptr) {
         throw std::out_of_range("prefix_tree::at");
     }
-    return *(node->m_value);
+    return node->m_value->second;
 }
 
 template <typename StringT, typename MappedT, typename AllocatorT>
@@ -113,7 +109,7 @@ auto prefix_tree<StringT, MappedT, AllocatorT>::operator[] (const key_type& key)
     if (node == nullptr) {
         node = m_impl.insert(key, mapped_type()).first;
     }
-    return *(node->m_value);
+    return node->m_value->second;
 }
 
 template <typename StringT, typename MappedT, typename AllocatorT>
@@ -182,6 +178,42 @@ template <typename StringT, typename MappedT, typename AllocatorT>
 auto prefix_tree<StringT, MappedT, AllocatorT>::cend() const -> const_iterator
 {
     return end();
+}
+
+template <typename StringT, typename MappedT, typename AllocatorT>
+auto prefix_tree<StringT, MappedT, AllocatorT>::rbegin() -> reverse_iterator
+{
+    return std::make_reverse_iterator(end());
+}
+
+template <typename StringT, typename MappedT, typename AllocatorT>
+auto prefix_tree<StringT, MappedT, AllocatorT>::rbegin() const -> const_reverse_iterator
+{
+    return std::make_reverse_iterator(end());
+}
+
+template <typename StringT, typename MappedT, typename AllocatorT>
+auto prefix_tree<StringT, MappedT, AllocatorT>::crbegin() const -> const_reverse_iterator
+{
+    return rbegin();
+}
+
+template <typename StringT, typename MappedT, typename AllocatorT>
+auto prefix_tree<StringT, MappedT, AllocatorT>::rend() -> reverse_iterator
+{
+    return std::make_reverse_iterator(begin());
+}
+
+template <typename StringT, typename MappedT, typename AllocatorT>
+auto prefix_tree<StringT, MappedT, AllocatorT>::rend() const -> const_reverse_iterator
+{
+    return std::make_reverse_iterator(begin());
+}
+
+template <typename StringT, typename MappedT, typename AllocatorT>
+auto prefix_tree<StringT, MappedT, AllocatorT>::crend() const -> const_reverse_iterator
+{
+    return rend();
 }
 
 template <typename StringT, typename MappedT, typename AllocatorT>
