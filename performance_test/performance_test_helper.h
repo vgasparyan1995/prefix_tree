@@ -131,49 +131,17 @@ void performance_test(const std::string& against)
     std::vector<std::string> keys;
 
     // Insert
-    std::cout << "Testing insert\n";
     for (int i = 0; i < get_size(S); ++i) {
         const auto key = generate_key<C, L>();
         keys.push_back(key);
-
-        src_tracker.start();
         src.insert({ key, i });
-        src_tracker.end();
-
-        dst_tracker.start();
         dst.insert({ key, i });
-        dst_tracker.end();
     }
-    src_tracker.print_compare(dst_tracker);
-    src_tracker.reset();
-    dst_tracker.reset();
 
     // Find
     std::cout << "Testing find\n";
     for (int i = 0; i < get_size(S) / 10; ++i) {
-        std::string key;
-        if (i % 20 == 0) {
-            key = generate_key<Case::RANDOM, L>();
-        } else {
-            key = keys[i];
-        }
-
-        src_tracker.start();
-        src.find(key);
-        src_tracker.end();
-
-        dst_tracker.start();
-        dst.find(key);
-        dst_tracker.end();
-    }
-    src_tracker.print_compare(dst_tracker);
-    src_tracker.reset();
-    dst_tracker.reset();
-
-    // Remove
-    std::cout << "Testing remove\n";
-    for (int i = 0; i < get_size(S) / 10; ++i) {
-        const auto key = keys[i];
+        std::string key = generate_key<Case::RANDOM, Length::SHORT>();
 
         src_tracker.start();
         src.find(key);
