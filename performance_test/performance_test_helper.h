@@ -1,17 +1,33 @@
 #include <iostream>
-#include <map>
-#include <unordered_map>
+#include <random>
+#include <utility>
+#include <vector>
 
 #include <prefix_tree.h>
+
+#include "time_tracker.h"
 
 enum class Size : char
 {
     SMALL,   // 100
     MEDIUM,  // 10000
-    LARGE    // 1000000
+    LARGE    // 300000
 };
 
-constexpr get_size(constexpr Size s)
+std::string to_string(const Size s)
+{
+    switch (s) {
+    case Size::SMALL:
+        return "SMALL";
+    case Size::MEDIUM:
+        return "MEDIUM";
+    case Size::LARGE:
+        return "LARGE";
+    }
+    return std::string();
+}
+
+constexpr int get_size(const Size s)
 {
     switch (s) {
     case Size::SMALL:
@@ -19,7 +35,7 @@ constexpr get_size(constexpr Size s)
     case Size::MEDIUM:
         return 10000;
     case Size::LARGE:
-        return 1000000;
+        return 300000;
     }
     return 100;
 }
@@ -30,22 +46,88 @@ enum class Case : char
     SIMILAR
 };
 
+std::string to_string(const Case s)
+{
+    switch (s) {
+    case Case::RANDOM:
+        return "RANDOM";
+    case Case::SIMILAR:
+        return "SIMILAR";
+    }
+    return std::string();
+}
+
 enum class Length : char
 {
     SHORT,
     LONG
 };
 
-template <template <typename, typename> typename ContainerT,
+std::string to_string(const Length s)
+{
+    switch (s) {
+    case Length::SHORT:
+        return "SHORT";
+    case Length::LONG:
+        return "LONG";
+    }
+    return std::string();
+}
+
+std::pair<int, int> get_length(const Length l)
+{
+    switch (l) {
+    case Length::SHORT:
+        return { 8, 4 };
+    case Length::LONG:
+        return { 128, 96 };
+    }
+    return { 8, 4 };
+}
+
+template <Case C>
+char generate_character(int i)
+{
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_int_distribution<char> dis('!', '~');
+    return dis(gen);
+}
+
+template <>
+char generate_character<Case::SIMILAR>(int i)
+{
+    return '!' + i % ('~' - '!');
+}
+
+template <Case C, Length L>
+std::string generate_key()
+{
+    std::string result;
+    const auto lengths = get_length(L);
+    result.reserve(lengths.first);
+    for (int i = 0; i < lengths.second; ++i) {
+        result.push_back(generate_character<C>(i));
+    }
+    for (int i = lengths.second; i < lengths.first; ++i) {
+        result.push_back(generate_character<Case::RANDOM>(i));
+    }
+    return result;
+}
+
+template <typename ContainerT,
           Size S,
           Case C,
           Length L>
-void peformance_test(const std::string& against)
+void performance_test(const std::string& against)
 {
+    std::cout << "===========================\n";
+    std::cout << to_string(S) << '\t' << to_string(C) << '\t' << to_string(L) << '\n';
+
     local::prefix_tree<std::string, int> src;
-    ContainerT<std::string, int> dst;
-    TimeTracker src_tracker("prefix_tree");
-    TimeTracker dst_tracker(against);
+    ContainerT dst;
+    time_tracker src_tracker("prefix_tree");
+    time_tracker dst_tracker(against);
     std::vector<std::string> keys;
 
     // Insert
@@ -54,51 +136,54 @@ void peformance_test(const std::string& against)
         const auto key = generate_key<C, L>();
         keys.push_back(key);
 
-        START(src_tracker);
+        src_tracker.start();
         src.insert({ key, i });
-        END(src_tracker);
+        src_tracker.end();
 
-        START(dst_tracker);
+        dst_tracker.start();
         dst.insert({ key, i });
-        END(dst_tracker);
+        dst_tracker.end();
     }
-    src_tracker.print_and_reset();
-    dst_tracker.print_and_reset();
+    src_tracker.print_compare(dst_tracker);
+    src_tracker.reset();
+    dst_tracker.reset();
 
     // Find
     std::cout << "Testing find\n";
     for (int i = 0; i < get_size(S) / 10; ++i) {
         std::string key;
-        if (i % 5 == 0) {
+        if (i % 20 == 0) {
             key = generate_key<Case::RANDOM, L>();
         } else {
             key = keys[i];
         }
 
-        START(src_tracker);
+        src_tracker.start();
         src.find(key);
-        END(src_tracker);
+        src_tracker.end();
 
-        START(dst_tracker);
+        dst_tracker.start();
         dst.find(key);
-        END(dst_tracker);
+        dst_tracker.end();
     }
-    src_tracker.print_and_reset();
-    dst_tracker.print_and_reset();
+    src_tracker.print_compare(dst_tracker);
+    src_tracker.reset();
+    dst_tracker.reset();
 
     // Remove
     std::cout << "Testing remove\n";
     for (int i = 0; i < get_size(S) / 10; ++i) {
         const auto key = keys[i];
 
-        START(src_tracker);
+        src_tracker.start();
         src.find(key);
-        END(src_tracker);
+        src_tracker.end();
 
-        START(dst_tracker);
+        dst_tracker.start();
         dst.find(key);
-        END(dst_tracker);
+        dst_tracker.end();
     }
-    src_tracker.print_and_reset();
-    dst_tracker.print_and_reset();
+    src_tracker.print_compare(dst_tracker);
+    src_tracker.reset();
+    dst_tracker.reset();
 }
